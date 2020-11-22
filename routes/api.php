@@ -6,6 +6,9 @@ use App\Http\Controllers\dummyAPI;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\FileController;
 
 
 /*
@@ -42,3 +45,20 @@ Route::get('search/{name}', [ProductController::class, 'search']);
 
 /*Delete Method api*/
 Route::get("delete/{id}", [ProductController::class, 'delete']);
+
+/*APi Validation*/
+Route::post('save', [ProductController::class, 'testData']);
+
+
+/*API authentication using sanctum*/
+Route::post("login",[UserController::class,'index']);
+
+/*authenticated users only can use this apis*/
+Route::group(['middleware' => 'auth:sanctum'], function(){
+    //All secure URL's
+	/*APi Resource*/
+	Route::resource('member', MemberController::class);
+});
+
+/*Api for file upload*/
+Route::post("upload", [FileController::class, 'upload']);

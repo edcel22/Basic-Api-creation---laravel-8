@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Validator;
 
 class ProductController extends Controller
 {
@@ -59,5 +60,33 @@ class ProductController extends Controller
     	} else {
     		return ["Result" => "Delete failed!"];
     	}
+    }
+    function testData (Request $request) {
+  		//create rules
+  		$rules = array(
+  			"name" => "required|min:2|max:4",
+  			"slug" => "required",
+  			"description" => "required"
+  		);
+  		//validate the request data 
+  		$validator = Validator::make($request->all(), $rules);
+  		if ($validator->fails()) {
+  			// return $validator->errors();
+  			//dapat yung response status is 401 kapag may issue sa data like unauthorized
+  			return response()->json($validator->errors(), 401);
+  		} else {
+  			$product = new Product;
+
+  			$product->name = $request->name;
+  			$product->slug = $request->slug;
+  			$product->description = $request->description;
+  			$result = $product->save();
+
+  			if ($result) {
+  				return ["Result" => "Data have been saved!"];
+  			} else {
+  				return ["Result" => "Operation Failed"];
+  			}
+  		}
     }
 }
